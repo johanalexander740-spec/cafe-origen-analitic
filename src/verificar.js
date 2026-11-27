@@ -20,7 +20,7 @@ function normalizarCiudad(ciudad) {
     return limpia.charAt(0).toUpperCase() + limpia.slice(1);
 }
 
-// 2. Total vendido agrupado por ciudad (usando reduce)
+//  Total vendido agrupado por ciudad (usando reduce)
 function totalPorCiudad(ventas) {
     return ventas.reduce((acumulador, venta) => {
         const ciudad = normalizarCiudad(venta.ciudad);

@@ -1,9 +1,8 @@
-export { GenerarVentasAzar };
 export {
-    GenerarVentasAzar as generarVentas,
+    GenerarVentasAzar,
     totalVendido,
-    VentaMayor as ventaMayor,
-    ventasPorCiudad as totalPorCiudad,
+    VentaMayor,
+    ventasPorCiudad,
     primeraVenta
 };
 const PRODUCTOS = [
@@ -46,7 +45,7 @@ function GenerarVentasAzar(n) {
     }
     return ventas
 }
-console.table(GenerarVentasAzar(10));
+console.table(GenerarVentasAzar(10)); //<- el 10 es la cantiad de ventas, si yo meto otro numero digamos 11 saldran 11 generaciones de ventas y etc
 
 
 const contador = { operaciones: 0 };
@@ -115,3 +114,45 @@ function primeraVenta(ventas, contador) {
     }
     return ventas[0];
 }
+//Analizar la complejidad espacial de las funciones del motor y comparar una cadena de métodos con un recorrido único.
+function totalCiudadCadena(ventas, ciudad) {
+
+    const ciudadBuscada = ciudad.trim().toLowerCase();    //trim y tolowecase limpan los arreys y los estandarizan
+    return ventas
+        .map((ventas) => ({
+            ...ventas, ciudad: ventas.ciudad.trim().toLowerCase()
+        }))
+
+        .filter((ventas) => ventas.ciudad === ciudadBuscada)
+        .map((ventas) => valorVenta(ventas))
+        .reduce((total, valor) => total + valor, 0);
+
+}
+console.log("Resultado de la normalizacion:", totalCiudadCadena(listaPrueba, "Medellín"))
+
+//segundo paso de normalizacion
+
+function totalCiudadUnaPasada(ventas, ciudad) {
+    let totalCiudad = 0;
+    const ciudadBuscada = ciudad.trim().toLowerCase();
+
+    for (const venta of ventas) {
+
+        const ciudadVenta = venta.ciudad.trim().toLowerCase();
+
+        if (ciudadVenta === ciudadBuscada) {
+            totalCiudad = totalCiudad + valorVenta(venta);
+        }
+    }
+    return totalCiudad;
+
+}
+
+//Paso 3 comparar las 10.000
+
+const ventas10k = GenerarVentasAzar(10000);
+console.log("Cadena (10k):    ", totalCiudadCadena(ventas10k, "Medellín"));
+console.log("Una pasada (10k):", totalCiudadUnaPasada(ventas10k, "Medellín"));
+
+
+

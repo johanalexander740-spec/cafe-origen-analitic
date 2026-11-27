@@ -81,9 +81,28 @@ Al correr node src/medir.js obtuve esta tabla:
 
 Mi predicción se cumplió exacta: cuando n se multiplicó por 10 (de 100 a 1000, luego a 10000 y luego a 100000), las operaciones de totalVendido, ventaMayor y totalPorCiudad también se multiplicaron por 10 (en ventaMayor siempre quedó el +1 inicial del if que revisa si el array está vacío, y en totalPorCiudad fueron 2 por vuelta porque primero lee/limpia la ciudad y luego compara). En cambio primeraVenta siempre se quedó en 1 sin importar si n era 100 o 100000.
 
-Clasificación de cada función:
+
 1. totalVendido(ventas, contador): O(n) lineal. Justificación: en el código tiene un único ciclo for...of que recorre toda la lista una vez y en los números pasó de 100 a 1000, 10000 y 100000 operaciones (crece exactamente igual que n).
 2. ventaMayor(ventas, contador): O(n) lineal. Justificación: aunque hace 2 operaciones por vuelta más 1 al inicio (2n + 1: 201, 2001, 20001, 200001), solo recorre el arreglo con un único ciclo for...of sin ciclos anidados, por lo que al multiplicar n por 10 el trabajo también crece 10 veces.
 3. totalPorCiudad(ventas, ciudad, contador): O(n) lineal. Justificación: hace 2 operaciones por cada venta visitada (2n: 200, 2000, 20000, 200000) dentro de un único for...of, creciendo proporcionalmente x10 cada vez que n se multiplica por 10.
 4. primeraVenta(ventas, contador): O(1) constante. Justificación: no tiene ningún ciclo for en el código, solo lee directo ventas[0], y en los números marcó 1 operación tanto con 100 ventas como con 100000 ventas.
 (Ninguna de las cuatro funciones es O(n²) porque ninguna tiene un ciclo for metido dentro de otro ciclo for).
+
+## Big o explicacion y normalización
+
+Paso 1 (totalCiudadCadena):
+Aquí hacemos la tarea por partes. Primero el .map agarra toda la lista y limpia los nombres de las ciudades. Después el .filter saca solo las de Medellín. Luego otro .map multiplica cantidad por precio para saber cuánta plata fue cada venta. Y al final el .reduce suma toda esa plata. El detalle es que en cada paso va creando una lista nueva en memoria.
+
+Paso 2 (totalCiudadUnaPasada):
+Aquí no damos tanta vuelta. Creamos una sola variable totalCiudad = 0, miramos la lista una única vez con un for...of, y cada vez que vemos una venta de Medellín le sumamos la plata directo a esa variable.
+
+Paso 3 (Prueba con 10.000 ventas):
+Le metemos 10.000 ventas al azar a las dos funciones y ambas dan exactamente lo mismo (393201000). O sea, las dos hacen bien la cuenta, aunque por dentro trabajen distinto.
+
+Paso 4 (Cuántas vueltas dan y cuánta memoria gastan):totalCiudadCadena: Revisa la lista 4 veces (una por cada método) y va creando 3 listas nuevas antes de dar el resultado. Como entre más ventas entren más grandes son esas listas nuevas y más se demora, queda como $O(n)$ en tiempo y $O(n)$ en espacio (memoria).totalCiudadUnaPasada: Revisa la lista 1 sola vez y no crea ninguna lista nueva, solo usa la variable totalCiudad donde va sumando. Por eso es $O(n)$ en tiempo (igual tiene que mirar toda la lista), pero $O(1)$ en espacio (siempre usa la misma variable, así entren 10 o 10.000 ventas).
+
+Paso 5 (Por qué ambas son $O(n)$ en tiempo):
+Aunque una dé 4 vueltas y la otra 1, en Big O los números fijos como ese 4 no se cuentan. Lo que importa es que si mañana entran 10 veces más ventas, las dos se van a demorar 10 veces más. Por eso ambas se marcan como $O(n)$.
+
+Paso 6 (Memoria de las otras funciones):
+La regla fácil es: si la función solo usa variables sueltas para ir guardando un dato, es $O(1)$; si va armando una lista ([]) o un objeto ({}) nuevo que crece con los datos, es $O(n)$:Solo usan variables sueltas — $O(1)$: totalVendido, unidadesVendidas, TicketPromedioVentas, ventasPorCiudad y VentaMayor (solo guardan un número o una venta de referencia y lo van cambiando).Crean listas u objetos nuevos — $O(n)$: ventasDelDia (usa .filter y saca una lista nueva), unidadesPorProducto y ventasPorCiudadResumen (arman un objeto {} nuevo), topProductosPorValor (arma objeto y listas nuevas), y clientesRecurrentes (va llenando una lista con .push).

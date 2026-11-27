@@ -305,8 +305,6 @@ function clientesRecurrentes(ventas) {
     return recurrentes;
 }
 
-
-
 module.exports = {
     ValorVenta,
     totalVendido,
