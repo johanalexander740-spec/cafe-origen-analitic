@@ -12,6 +12,7 @@ For = para, le pido que lea la constante venta de ventas, venta son los valores 
 El error de antes fue en el cierre de la funcion y colocar totalVendido en la sumatoria del total en ves de llamar a ValorVenta
 Para ver el resultado en consola debo de llamar a la funcion, en este caso a unidadesVendidas, antes no salia porque estaba era llamando a la variable let TotalUnidades y esa variable solo vive adentro
 ¿Por qué daba NaN? en el ciclo puse ventas.cantidad con s, ventas en plural es la lista completa y los arreglos no tienen .cantidad sino .length entonces daba undefined, y cuando sumas 0 + undefined da NaN, tenia que ser venta.cantidad en singular
+por que en elegirAlAzar(lista) uso lista si no existe afuera: lista es un parametro osea un comodin, no existe afuera sino que es el nombre que le doy a lo que le meta a la funcion entre parentesis, si le meto ciudades lista vale ciudades y si le meto PRODUCTOS lista vale PRODUCTOS, asi reutilizo la misma funcion y no hago dos iguales, ademas como esta funcion solo hace un calculo directo de Math.random y lee la posicion [posicion] no usa ningun for y no recorre nada, su trabajo siempre es 1 sola operacion sin importar si la lista tiene 4 o 100000 cosas, osea que es tiempo constante O(1)
 
 La venta mayor con el ejemplo de la baraja:
 Primero miramos si existen ventas con if(ventas.length === 0) si no devuelve null, si no fue el caso continua
@@ -55,3 +56,34 @@ Error 2: El ticket promedio daba NaN cuando filtraba un dia sin ventas
 - Prueba realizada: llamar a TicketPromedioVentas([]) con un array vacio a ver que botaba
 - Causa: no habia ningun if que frenara la division cuando no habian ventas validas
 - Correccion: le agregamos if (ventasValidadas === 0) return 0; y asi si no hay ventas devuelve 0 directo en ves de hacer la division y no da NaN
+
+
+## Medicion de Big O y predicciones antes de medir
+si multiplicamos los datos n por 10 (ejemplo pasar de 100 a 1000 ventas, o de 1000 a 10000):
+- totalVendido: tiene un for of que recorre la lista completa, si hay 10 veces mas ventas hace 10 veces mas vueltas y operaciones, osea que el trabajo se multiplica por 10, es O(n) lineal
+- ventaMayor: tambien recorre todo el array de inicio a fin comparando carta por carta, si hay 10 veces mas datos se multiplica por 10 el trabajo, es O(n) lineal
+- totalPorCiudad: igual, revisa cada venta con el for of para ver si coincide con la ciudad, hace 10 veces mas operaciones, es O(n) lineal
+- primeraVenta(ventas): solo mira ventas[0] directo, no le importa si la lista tiene 10 o 100000 cosas siempre hace 1 sola operacion fija, no crece nada, es O(1) constante
+
+
+Predicción antes de medir:
+Según las pruebas que hice con 5 ventas (totalVendido hizo 5 operaciones, ventaMayor hizo 11 y totalPorCiudad hizo 10), mi predicción es que si n se multiplica por 10, el número de operaciones de las tres funciones también se va a multiplicar por 10 (en ventaMayor será prácticamente por 10, solo sumando 1 más por la revisión inicial de si la lista está vacía).
+
+Esto ocurre porque las tres funciones usan un solo ciclo for...of que recorre la lista de ventas de principio a fin una única vez. Como no hay ciclos dentro de otros ciclos, si la cantidad de datos crece 10 veces, cada función tendrá que dar 10 veces más vueltas.
+
+
+Comparación con los resultados medidos y clasificación Big O:
+Al correr node src/medir.js obtuve esta tabla:
+- n = 100 -> totalVendido: 100 | ventaMayor: 201 | totalPorCiudad: 200 | primeraVenta: 1
+- n = 1000 -> totalVendido: 1000 | ventaMayor: 2001 | totalPorCiudad: 2000 | primeraVenta: 1
+- n = 10000 -> totalVendido: 10000 | ventaMayor: 20001 | totalPorCiudad: 20000 | primeraVenta: 1
+- n = 100000 -> totalVendido: 100000 | ventaMayor: 200001 | totalPorCiudad: 200000 | primeraVenta: 1
+
+Mi predicción se cumplió exacta: cuando n se multiplicó por 10 (de 100 a 1000, luego a 10000 y luego a 100000), las operaciones de totalVendido, ventaMayor y totalPorCiudad también se multiplicaron por 10 (en ventaMayor siempre quedó el +1 inicial del if que revisa si el array está vacío, y en totalPorCiudad fueron 2 por vuelta porque primero lee/limpia la ciudad y luego compara). En cambio primeraVenta siempre se quedó en 1 sin importar si n era 100 o 100000.
+
+Clasificación de cada función:
+1. totalVendido(ventas, contador): O(n) lineal. Justificación: en el código tiene un único ciclo for...of que recorre toda la lista una vez y en los números pasó de 100 a 1000, 10000 y 100000 operaciones (crece exactamente igual que n).
+2. ventaMayor(ventas, contador): O(n) lineal. Justificación: aunque hace 2 operaciones por vuelta más 1 al inicio (2n + 1: 201, 2001, 20001, 200001), solo recorre el arreglo con un único ciclo for...of sin ciclos anidados, por lo que al multiplicar n por 10 el trabajo también crece 10 veces.
+3. totalPorCiudad(ventas, ciudad, contador): O(n) lineal. Justificación: hace 2 operaciones por cada venta visitada (2n: 200, 2000, 20000, 200000) dentro de un único for...of, creciendo proporcionalmente x10 cada vez que n se multiplica por 10.
+4. primeraVenta(ventas, contador): O(1) constante. Justificación: no tiene ningún ciclo for en el código, solo lee directo ventas[0], y en los números marcó 1 operación tanto con 100 ventas como con 100000 ventas.
+(Ninguna de las cuatro funciones es O(n²) porque ninguna tiene un ciclo for metido dentro de otro ciclo for).
