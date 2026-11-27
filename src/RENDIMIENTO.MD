@@ -33,7 +33,7 @@ Pasar de **10.000** a **1.000.000** de ventas significa multiplicar los datos po
 * **Funciones $O(1)$ (`ValorVenta`, `primeraVenta`):**
   * **Crece:** $\times 1$ (no cambia).
   * **Estimación:** Sigue haciendo **1 operación** y tardando **menos de 0.01 ms**, sin importar si hay diez o un millón de ventas.
-* **Funciones $O(n)$ (`totalVendido`, `unidadesVendidas`, `VentaMayor`, `TicketPromedioVentas`, `totalCiudadUnaPasada`, `totalCiudadCadena`, `ventasDelDia`, `unidadesPorProducto`, `ventasPorCiudadResumen`):**
+* **Funciones $O(n)$ (`totalVendido`, `unidadesVendidas`, `VentaMayor`, `TicketPromedioVentas`, `totalCiudadUnaPasada`, `totalCiudadCadena`, `ventasDelDia`, `unidadesPorProducto`, `ventasPorCiudadResumen`):**l
   * **Crece:** $\times 100$ (proporcional a los datos).
   * **Estimación:** Pasan de 10.000 a **1.000.000 de operaciones** (y ~3.500.000 en `totalCiudadCadena`). En tiempo, pasan de ~0.3–3.5 ms a unos **30 ms – 350 ms** (menos de medio segundo). La diferencia es que `totalCiudadCadena` duplicará varias veces la lista en RAM.
 * **Función $O(n \log n)$ (`topProductosPorValor`):**

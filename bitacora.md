@@ -106,3 +106,30 @@ Aunque una dé 4 vueltas y la otra 1, en Big O los números fijos como ese 4 no 
 
 Paso 6 (Memoria de las otras funciones):
 La regla fácil es: si la función solo usa variables sueltas para ir guardando un dato, es $O(1)$; si va armando una lista ([]) o un objeto ({}) nuevo que crece con los datos, es $O(n)$:Solo usan variables sueltas — $O(1)$: totalVendido, unidadesVendidas, TicketPromedioVentas, ventasPorCiudad y VentaMayor (solo guardan un número o una venta de referencia y lo van cambiando).Crean listas u objetos nuevos — $O(n)$: ventasDelDia (usa .filter y saca una lista nueva), unidadesPorProducto y ventasPorCiudadResumen (arman un objeto {} nuevo), topProductosPorValor (arma objeto y listas nuevas), y clientesRecurrentes (va llenando una lista con .push).
+
+## MiniReto 9 – Paso 1: Método de resolución
+
+**Entender**
+- *Entrada*: arreglo `ventas` (objetos con id, fecha, cliente, producto, ciudad, cantidad, precio).
+- *Salida*: conjunto de códigos de clientes que aparecen más de una vez.
+- *Restricciones*: debe procesarse en < 1 s para 100 000 ventas; uso de `Set` y `Map` sin librerías externas; mantener nombres en español.
+
+**Ejemplos y casos borde**
+- Caso típico: `[ {cliente:'C01'}, {cliente:'C02'}, {cliente:'C01'} ] → ['C01']`.
+- Borde 1: venta con `cantidad:0` – se cuenta aun cuando no genera dinero.
+- Borde 2: ciudad con mayúsculas/minúsculas distintas – irrelevante para este reto.
+- Borde 3: lista vacía → result → `[]`.
+
+**Fuerza bruta**
+- Recorrer el arreglo y, por cada venta, comparar su cliente con todos los anteriores (`O(n²)`).
+- Complejidad temporal: cuadrática; para 100 000 ventas se vuelve impráctico (minutos).
+
+**Optimización**
+- Usar un `Set` `vistos` para registrar clientes ya vistos y otro `Set` `recurrentes` para aquellos que aparecen ≥2 veces → `O(n)` tiempo, `O(k)` memoria (k = número de clientes únicos).
+- Alternativamente, un `Map` `conteo` que almacena cuántas compras hizo cada cliente y extraer los que tengan `>1`.
+
+**Implementar**
+- Definir `clientesRecurrentesSet(ventas)` y `comprasPorCliente(ventas)` según lo anterior.
+
+**Probar**
+- Comparar resultados (ordenados) con la versión original y con datos generados (5 000 ventas).

@@ -282,6 +282,7 @@ function ventasPorCiudadResumen(ventas) {
 }
 
 
+// Versión original (fuerza bruta) – O(n²)
 function clientesRecurrentes(ventas) {
 
     const recurrentes = [];
@@ -305,10 +306,93 @@ function clientesRecurrentes(ventas) {
     return recurrentes;
 }
 
+// ------------------------------------------------------------
+// Optimización 1 – usando Set (tiempo O(n))
+function clientesRecurrentesSet(ventas) {
+    const vistos = new Set();
+    const recurrentes = new Set();
+    for (const venta of ventas) {
+        if (vistos.has(venta.cliente)) {
+            recurrentes.add(venta.cliente);
+        } else {
+            vistos.add(venta.cliente);
+        }
+    }
+    // retornamos un arreglo para mantener compatibilidad con la versión original
+    return Array.from(recurrentes);
+}
+
+// Optimización 2 – usando Map para contar compras por cliente
+function comprasPorCliente(ventas) {
+    const conteo = new Map();
+    for (const venta of ventas) {
+        const actual = conteo.get(venta.cliente) || 0;
+        conteo.set(venta.cliente, actual + 1);
+    }
+    // obtener los clientes con más de una compra
+    const recurrentes = [];
+    for (const [cliente, cant] of conteo.entries()) {
+        if (cant > 1) recurrentes.push(cliente);
+    }
+    // retornamos tanto el mapa como el arreglo de recurrentes
+    return { mapa: conteo, recurrentes };
+}
+
+
+const recurrentes = [];
+let comparaciones = 0;
+
+for (let i = 0; i < ventas.length; i++) {
+
+    for (let j = i + 1; j < ventas.length; j++) {
+
+        comparaciones++;
+
+        if (
+
+            ventas[i].cliente === ventas[j].cliente &&
+            !recurrentes.includes(ventas[i].cliente))
+            recurrentes.push(ventas[i].cliente);
+    }
+
+}
+recurrentes._comparaciones = comparaciones;
+return recurrentes;
+
+
+// ------------------------------------------------------------
+// Optimización 1 – usando Set (tiempo O(n))
+function clientesRecurrentesSet(ventas) {
+    const vistos = new Set();
+    const recurrentes = new Set();
+    for (const venta of ventas) {
+        if (vistos.has(venta.cliente)) {
+            recurrentes.add(venta.cliente);
+        } else {
+            vistos.add(venta.cliente);
+        }
+    }
+    return Array.from(recurrentes);
+}
+
+// Optimización 2 – usando Map para contar compras por cliente
+function comprasPorCliente(ventas) {
+    const conteo = new Map();
+    for (const venta of ventas) {
+        const actual = conteo.get(venta.cliente) || 0;
+        conteo.set(venta.cliente, actual + 1);
+    }
+    const recurrentes = [];
+    for (const [cliente, cant] of conteo.entries()) {
+        if (cant > 1) recurrentes.push(cliente);
+    }
+    return { mapa: conteo, recurrentes };
+}
+
 module.exports = {
     ValorVenta,
     totalVendido,
-    totalVendidoM,
+
     unidadesVendidas,
     unidadesVendidasM: UnidadesVendidasM,
     VentaMayor,
@@ -323,6 +407,7 @@ module.exports = {
     unidadesPorProducto,
     topProductosPorValor,
     ventasPorCiudadResumen,
-    clientesRecurrentes
+    clientesRecurrentes,
+    clientesRecurrentesSet,
+    comprasPorCliente
 };
-
