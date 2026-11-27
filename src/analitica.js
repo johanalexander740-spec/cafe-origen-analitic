@@ -1,15 +1,4 @@
-//Min reto 1//
 
-/**
- * MiniReto 9 – Implementaciones lineales
- */
-
-/**
- * Devuelve un array con los IDs de los clientes que aparecen más de una vez
- * usando un Set para registrar los clientes vistos.
- * @param {Array} ventas - arreglo de objetos venta
- * @returns {Array} lista de clientes recurrentes (sin duplicados)
- */
 function clientesRecurrentesSet(ventas) {
     const vistos = new Set();
     const recurrentes = new Set();
