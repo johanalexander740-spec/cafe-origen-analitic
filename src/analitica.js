@@ -1,5 +1,50 @@
 //Min reto 1//
 
+/**
+ * MiniReto 9 – Implementaciones lineales
+ */
+
+/**
+ * Devuelve un array con los IDs de los clientes que aparecen más de una vez
+ * usando un Set para registrar los clientes vistos.
+ * @param {Array} ventas - arreglo de objetos venta
+ * @returns {Array} lista de clientes recurrentes (sin duplicados)
+ */
+function clientesRecurrentesSet(ventas) {
+    const vistos = new Set();
+    const recurrentes = new Set();
+    for (const v of ventas) {
+        const cli = v.cliente;
+        if (vistos.has(cli)) {
+            recurrentes.add(cli);
+        } else {
+            vistos.add(cli);
+        }
+    }
+    return Array.from(recurrentes);
+}
+
+/**
+ * Cuenta cuántas compras hizo cada cliente y devuelve un objeto con:
+ *  - mapa: Map<cliente, cantidad>
+ *  - recurrentes: array de clientes con más de una compra
+ * @param {Array} ventas
+ * @returns {{mapa: Map, recurrentes: Array}}
+ */
+function comprasPorCliente(ventas) {
+    const mapa = new Map();
+    for (const v of ventas) {
+        const cli = v.cliente;
+        mapa.set(cli, (mapa.get(cli) || 0) + v.cantidad);
+    }
+    const recurrentes = [];
+    for (const [cli, cant] of mapa.entries()) {
+        if (cant > 1) recurrentes.push(cli);
+    }
+    return { mapa, recurrentes };
+}
+
+
 const ventas = require('./datos');
 
 console.log("Cantidad de registro ", ventas.length);
@@ -307,20 +352,6 @@ function clientesRecurrentes(ventas) {
 }
 
 // ------------------------------------------------------------
-// Optimización 1 – usando Set (tiempo O(n))
-function clientesRecurrentesSet(ventas) {
-    const vistos = new Set();
-    const recurrentes = new Set();
-    for (const venta of ventas) {
-        if (vistos.has(venta.cliente)) {
-            recurrentes.add(venta.cliente);
-        } else {
-            vistos.add(venta.cliente);
-        }
-    }
-    // retornamos un arreglo para mantener compatibilidad con la versión original
-    return Array.from(recurrentes);
-}
 
 // Optimización 2 – usando Map para contar compras por cliente
 function comprasPorCliente(ventas) {
@@ -360,20 +391,7 @@ recurrentes._comparaciones = comparaciones;
 return recurrentes;
 
 
-// ------------------------------------------------------------
-// Optimización 1 – usando Set (tiempo O(n))
-function clientesRecurrentesSet(ventas) {
-    const vistos = new Set();
-    const recurrentes = new Set();
-    for (const venta of ventas) {
-        if (vistos.has(venta.cliente)) {
-            recurrentes.add(venta.cliente);
-        } else {
-            vistos.add(venta.cliente);
-        }
-    }
-    return Array.from(recurrentes);
-}
+
 
 // Optimización 2 – usando Map para contar compras por cliente
 function comprasPorCliente(ventas) {
@@ -389,10 +407,81 @@ function comprasPorCliente(ventas) {
     return { mapa: conteo, recurrentes };
 }
 
+// Import catalog for combo functions
+const catalogo = require('./catalogo');
+
+function comboRegaloBruto(catalogo, valor) {
+    for (let i = 0; i < catalogo.length; i++) {
+        for (let j = i + 1; j < catalogo.length; j++) {
+            if (catalogo[i].precio + catalogo[j].precio === valor) {
+                return [catalogo[i].producto, catalogo[j].producto];
+            }
+        }
+    }
+    return null;
+}
+
+
+function comboRegalo(catalogo, valor) {
+    const vistos = new Map(); // precio -> producto
+    for (const item of catalogo) {
+        const complement = valor - item.precio;
+        if (vistos.has(complement)) {
+            return [vistos.get(complement), item.producto];
+        }
+        vistos.set(item.precio, item.producto);
+    }
+    return null;
+}
+
+
+function productoEstrellaPorCiudad(ventas) {
+    const porCiudad = new Map(); // ciudad -> Map(producto -> count)
+    for (const v of ventas) {
+        const ciudad = v.ciudad.trim().toLowerCase();
+        const prod = v.producto;
+        if (!porCiudad.has(ciudad)) {
+            porCiudad.set(ciudad, new Map());
+        }
+        const mapaProd = porCiudad.get(ciudad);
+        mapaProd.set(prod, (mapaProd.get(prod) || 0) + 1);
+    }
+    const resultado = {};
+    for (const [ciudad, mapaProd] of porCiudad.entries()) {
+        let maxCount = 0;
+        let estrella = null;
+        for (const [prod, cnt] of mapaProd.entries()) {
+            if (cnt > maxCount) {
+                maxCount = cnt;
+                estrella = prod;
+            }
+        }
+        // capitalizar ciudad para salida legible
+        const ciudadFmt = ciudad.charAt(0).toUpperCase() + ciudad.slice(1);
+        resultado[ciudadFmt] = estrella;
+    }
+    return resultado;
+}
+
+function primerClienteUnico(ventas) {
+    const cuenta = new Map();
+    for (const v of ventas) {
+        const cli = v.cliente;
+        cuenta.set(cli, (cuenta.get(cli) || 0) + 1);
+    }
+    for (const v of ventas) {
+        if (cuenta.get(v.cliente) === 1) {
+            return v.cliente;
+        }
+    }
+    return null;
+}
+
+// Export new functions (add to existing export block)
 module.exports = {
+    // Funciones básicas
     ValorVenta,
     totalVendido,
-
     unidadesVendidas,
     unidadesVendidasM: UnidadesVendidasM,
     VentaMayor,
@@ -407,7 +496,13 @@ module.exports = {
     unidadesPorProducto,
     topProductosPorValor,
     ventasPorCiudadResumen,
+    // MiniReto 9
     clientesRecurrentes,
     clientesRecurrentesSet,
-    comprasPorCliente
+    comprasPorCliente,
+    // MiniReto 10
+    comboRegaloBruto,
+    comboRegalo,
+    productoEstrellaPorCiudad,
+    primerClienteUnico
 };
