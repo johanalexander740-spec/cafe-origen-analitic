@@ -1,9 +1,17 @@
 import { GenerarVentasAzar, totalVendido, ventaMayor, totalPorCiudad, primeraVenta } from "./generador.js";
+import { clientesRecurrentes } from "./analitica.js";
 const tamanos = [100, 1000, 10000, 100000];
 const resultados = [];
 
 for (const n of tamanos) {
     const ventas = GenerarVentasAzar(n);
+    console.time(`clientesRecurrentes n=${n}`);
+    clientesRecurrentes(ventas);
+    console.timeEnd(`clientesRecurrentes n=${n}`);
+
+    clientesRecurrentes(ventas);
+    console.timeEnd(`clientesRecurrentes n=${n}`);
+
 
     const contadorTotal = { operaciones: 0 };
     const contadorMayor = { operaciones: 0 };
@@ -23,5 +31,6 @@ for (const n of tamanos) {
         primeraVenta: contadorPrimera.operaciones
     });
 }
+
 
 console.table(resultados)

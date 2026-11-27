@@ -259,7 +259,7 @@ function unidadesPorProducto(ventas) {
     return unidades;
 }
 
-// Top N productos por valor total en ventas
+
 function topProductosPorValor(ventas, limite = 3) {
     const ingresos = {};
     for (const venta of ventas) {
@@ -271,7 +271,7 @@ function topProductosPorValor(ventas, limite = 3) {
         .slice(0, limite);
 }
 
-// Resumen de ventas por ciudad normalizada (evita duplicados)
+
 function ventasPorCiudadResumen(ventas) {
     const resumen = {};
     for (const venta of ventas) {
@@ -280,6 +280,32 @@ function ventasPorCiudadResumen(ventas) {
     }
     return resumen;
 }
+
+
+function clientesRecurrentes(ventas) {
+
+    const recurrentes = [];
+    let comparaciones = 0;
+
+    for (let i = 0; i < ventas.length; i++) {
+
+        for (let j = i + 1; j < ventas.length; j++) {
+
+            comparaciones++;
+
+            if (
+
+                ventas[i].cliente === ventas[j].cliente &&
+                !recurrentes.includes(ventas[i].cliente))
+                recurrentes.push(ventas[i].cliente);
+        }
+
+    }
+    recurrentes._comparaciones = comparaciones;
+    return recurrentes;
+}
+
+
 
 module.exports = {
     ValorVenta,
@@ -298,6 +324,7 @@ module.exports = {
     VentasDelDia: ventasDelDia,
     unidadesPorProducto,
     topProductosPorValor,
-    ventasPorCiudadResumen
+    ventasPorCiudadResumen,
+    clientesRecurrentes
 };
 
