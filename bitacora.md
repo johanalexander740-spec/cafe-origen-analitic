@@ -133,3 +133,6 @@ La regla fácil es: si la función solo usa variables sueltas para ir guardando 
 
 **Probar**
 - Comparar resultados (ordenados) con la versión original y con datos generados (5 000 ventas).
+
+Debo de ser más organizado con mi codigo.
+
