@@ -1,24 +1,8 @@
-<<<<<<< HEAD
-// Analítica Café Origen – funciones de soporte
+// Analítica Café Origen – funciones de soporte y exportacion para medir y el resto del proyecto
 
 // ---------- Funciones básicas ----------
 function ValorVenta(venta) {
     return venta.cantidad * venta.precio;
-=======
-
-function clientesRecurrentesSet(ventas) {
-    const vistos = new Set();
-    const recurrentes = new Set();
-    for (const v of ventas) {
-        const cli = v.cliente;
-        if (vistos.has(cli)) {
-            recurrentes.add(cli);
-        } else {
-            vistos.add(cli);
-        }
-    }
-    return Array.from(recurrentes);
->>>>>>> 628bc1d0e586b52869f0daff4c5074e54fc6b2ec
 }
 
 function totalVendido(ventas) {
